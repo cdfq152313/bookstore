@@ -1,4 +1,4 @@
-from flask import Flask, session, redirect, url_for, escape, request
+from flask import Flask, session, redirect, url_for, escape, request, render_template
 from SQLFacade import SQLFacade
 
 # flask initial
@@ -10,8 +10,8 @@ app.secret_key = '\x11S>Bi\xf7\xd5}:\x90\r\xbb\xd7\x04\x91\x0e\xa6\x08o\xe6n8d\x
 @app.route('/')
 def index():
     if 'username' in session:
-        return 'Logged in as %s' % escape(session['username'])
-    return 'You are not logged in'
+        return render_template('index.html', name=session['username'])
+    return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -24,13 +24,7 @@ def login():
         if result:
             session['username'] = request.form['username']
         return redirect(url_for('index'))
-    return '''
-        <form action="" method="post">
-            <p><input type=text name=username>
-            <p><input type=password name=password>
-            <p><input type=submit value=Login>
-        </form>
-    '''
+    return render_template('login.html')
 
 @app.route('/logout')
 def logout():
@@ -50,30 +44,17 @@ def register():
         data['phone'] = None
         sql.create_member(data)
         return redirect(url_for('index'))
-    return '''
-        <form action="" method="post">
-            <p><input type=text name=username>
-            <p><input type=password name=password>
-            <p><input type=submit value=register>
-        </form>
-    '''
+    return render_template('register.html')
 
 @app.route('/order', methods=['GET', 'POST'])
 def order():
     if 'username' not in session:
-        return 'You are not logged in'
+        return redirect(url_for('index'))
 
     if request.method == 'POST':
-
         return redirect(url_for('index'))
     else:
-        return '''
-        <form action="" method="post">
-            <p><input type=text name=username>
-            <p><input type=password name=password>
-            <p><input type=submit value=register>
-        </form>
-        '''
+        return render_template('order.html')
 
 
 if __name__ == "__main__":
