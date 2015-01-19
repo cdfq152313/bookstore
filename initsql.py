@@ -42,7 +42,7 @@ tablesContent.append(  (
 #oderlist
 tablesContent.append(  (
        "CREATE TABLE orderList ("
-        " orderID VARCHAR(20) NOT NULL,"
+        " orderID INT AUTO_INCREMENT,"
         " deliveryStatus INT,"
         " time VARCHAR(20),"
         " totalPrice INT,"
@@ -69,7 +69,7 @@ tablesContent.append( (
 #dispatch
 tablesContent.append(  (
        "CREATE TABLE dispatch ("
-        " orderID VARCHAR(20) NOT NULL,"
+        " orderID INT NOT NULL,"
         " itemNumber VARCHAR(20) NOT NULL,"
         " amountOfItem INT NOT NULL,"
         " salePrice INT NOT NULL,"

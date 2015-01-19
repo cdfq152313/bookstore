@@ -1,8 +1,9 @@
 import mysql.connector
 from mysql.connector import errorcode
 
+from datetime import datetime
+
 class SQLFacade():
-    __single = None
     config = {
       'user': 'bookmanager',
       'password': '0000',
@@ -12,10 +13,6 @@ class SQLFacade():
     }
 
     def __init__(self):
-        if SQLFacade.__single:
-            raise Singleton.__single
-        SQLFacade.__single = self
-
         self.cnx = self.connect_SQL(self.config)
         self.cursor = self.cnx.cursor()
 
@@ -33,12 +30,6 @@ class SQLFacade():
                 exit(1)
         else:
             return cnx
-
-    @classmethod
-    def get_singleton(Class):
-        if not SQLFacade.__single:
-            SQLFacade.__single = SQLFacade()
-        return SQLFacade.__single
 
     def create_member(self, data):
         instruction =( "INSERT INTO  member (memberID, passwd, name, address, phone)"
@@ -58,7 +49,11 @@ class SQLFacade():
         return False
         
     def create_order(self, data):
-        instruction =( "INSERT INTO orderList (orderID, memberID, deliveryStatus, time, totalPrice, payway)"
-            "VALUES (%(orderID)s, %(memberID)s, %(deliveryStatus)s, %(time)s, %(totalPrice)s, %(payway)s) ;")
-        print (instruction)
-        self.cursor.execute()
+        data['today'] = datetime.now().date()
+        # create orderlist & get orderlist index
+        
+
+        # create book dispatch & minus number in stock
+
+        # calculate total price & update
+
