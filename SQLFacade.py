@@ -47,7 +47,33 @@ class SQLFacade():
             if passwd[0] == data['passwd']:
                 return True
         return False
+    
+    def create_shoppingbox(self,memberID):
+        data = dict()
+        data['memberID'] = memberID
+        instruction =( "INSERT INTO  orderList (deliveryStatus, memberID)"
+                        "VALUES (0,%(memberID)s) ;")
+        print (instruction)
+        self.cursor.execute(instruction, data )
+        self.cnx.commit()
+        # self.cursor.execute("SELECT LAST_INSERT_ID")
+        # print(self.cursor)
+        return
         
+    def get_shoppingbox(self, memberID):
+        data = dict()
+        data['memberID'] = memberID
+        instruction = "SELECT orderID, deliveryStatus FROM orderList WHERE memberID=%(memberID)s"
+        print (instruction)
+        self.cursor.execute(instruction, data)
+        for result in self.cursor:
+            # this is shopping box
+            if result[1] == 0:
+                print result 
+                return result
+        return self.create_shoppingbox(memberID) 
+
+
     def create_order(self, data):
         data['today'] = datetime.now().date()
         # create orderlist & get orderlist index
