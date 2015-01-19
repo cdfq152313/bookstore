@@ -72,7 +72,7 @@ tablesContent.append(  (
         " orderID INT NOT NULL,"
         " itemNumber VARCHAR(20) NOT NULL,"
         " amountOfItem INT NOT NULL,"
-        " salePrice INT NOT NULL,"
+        " salePrice INT ,"
         " FOREIGN KEY (orderID) REFERENCES orderList(orderID),"
         " FOREIGN KEY (itemNumber) REFERENCES book(itemNumber),"
         " PRIMARY KEY (orderID, itemNumber) "

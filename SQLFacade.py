@@ -48,6 +48,12 @@ class SQLFacade():
                 return True
         return False
 
+    def add_item2shoppingbox(self, data):
+        instruction = ("INSERT INTO dispatch (orderID, itemNumber, amountOfItem, salePrice)"
+                        "VALUES (%(orderID)s, %(itemNumber)s, %(amountOfItem)s, %(salePrice)s  ) ;" )
+        print (instruction)
+        self.cursor.execute(instruction, data)
+        
     def create_shoppingbox(self,memberID):
         data = dict()
         data['memberID'] = memberID
@@ -58,7 +64,7 @@ class SQLFacade():
         self.cnx.commit()
         # self.cursor.execute("SELECT LAST_INSERT_ID")
         # print(self.cursor)
-        return
+        return self.get_shoppingbox(memberID)
 
     def get_shoppingbox(self, memberID):
         data = dict()
@@ -69,8 +75,8 @@ class SQLFacade():
         for result in self.cursor:
             # this is shopping box
             if result[1] == 0:
-                print result 
-                return result
+                print (result)
+                return result[0]
         return self.create_shoppingbox(memberID) 
 
     def find_book(self, keyword):

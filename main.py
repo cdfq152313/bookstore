@@ -26,8 +26,10 @@ def login():
         return redirect(url_for('index'))
     return render_template('login.html')
 
-@app.route('/search', method=['GET'])
-    return render_template('search.html')
+@app.route('/search')
+def search():
+    return 
+#    return render_template('search.html')
 
 @app.route('/logout')
 def logout():
