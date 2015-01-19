@@ -8,8 +8,8 @@ bookData = dataPath + 'item.csv'
 
 # db config
 config = {
-  'user': 'bookmanager',
-  'password': '0000',
+  'user': 'root',
+  'password': 'imis1000801',
   'host': '127.0.0.1',
   'database': 'bookstore',
   'raise_on_warnings': True,

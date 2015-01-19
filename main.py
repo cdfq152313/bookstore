@@ -26,6 +26,9 @@ def login():
         return redirect(url_for('index'))
     return render_template('login.html')
 
+@app.route('/search', method=['GET'])
+    return render_template('search.html')
+
 @app.route('/logout')
 def logout():
     # remove the username from the session if it's there

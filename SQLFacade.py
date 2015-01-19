@@ -5,8 +5,8 @@ from datetime import datetime
 
 class SQLFacade():
     config = {
-      'user': 'bookmanager',
-      'password': '0000',
+      'user': 'root',
+      'password': 'imis1000801',
       'host': '127.0.0.1',
       'database': 'bookstore',
       'raise_on_warnings': True,
@@ -47,7 +47,7 @@ class SQLFacade():
             if passwd[0] == data['passwd']:
                 return True
         return False
-    
+
     def create_shoppingbox(self,memberID):
         data = dict()
         data['memberID'] = memberID
@@ -59,7 +59,7 @@ class SQLFacade():
         # self.cursor.execute("SELECT LAST_INSERT_ID")
         # print(self.cursor)
         return
-        
+
     def get_shoppingbox(self, memberID):
         data = dict()
         data['memberID'] = memberID
@@ -73,13 +73,12 @@ class SQLFacade():
                 return result
         return self.create_shoppingbox(memberID) 
 
-
-    def create_order(self, data):
-        data['today'] = datetime.now().date()
-        # create orderlist & get orderlist index
-        
-
-        # create book dispatch & minus number in stock
-
-        # calculate total price & update
-
+    def find_book(self, keyword):
+        keyword = '%' + keyword + '%'
+        data = dict()
+        data['keyword'] = keyword
+        instruction = "SELECT * FROM book WHERE title LIKE %(keyword)s ;"
+        print (instruction)
+        self.cursor.execute(instruction, data)
+        for i in self.cursor:
+            print (i)
