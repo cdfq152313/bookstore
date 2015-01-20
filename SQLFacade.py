@@ -133,21 +133,16 @@ class SQLFacade():
         orderID = self.get_shopping_cart_ID(memberID)
         data = dict()
         data['orderID'] = orderID
-        instruction = "SELECT itemNumber, amountOfItem FROM dispatch WHERE orderID=%(orderID)s ;"
+        instruction =( "SELECT dispatch.itemNumber, book.title, dispatch.amountOfItem, book.listPrice, book.salePrice "
+                       "FROM dispatch, book "
+                       "WHERE orderID=%(orderID)s AND dispatch.itemNumber=book.itemNumber ;")
         print(instruction)
         self.cursor.execute(instruction, data)
 
-        temp = []
-        for output in self.cursor:
-            temp.append( output )
-
         result = []
-        for output in temp: 
-            itemname = self.get_itemName( output[0] )
-            result.append( (output[0], itemname, output[1]) )
-
-        for i in result:
-            print (i[0] , i[1], i[2])
+        for i in self.cursor:
+            result.append(i)
+            print (i)
         return result
 
     def find_book(self, keyword):
