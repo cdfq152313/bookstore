@@ -44,7 +44,7 @@ tablesContent.append(  (
        "CREATE TABLE orderList ("
         " orderID INT AUTO_INCREMENT,"
         " deliveryStatus INT,"
-        " time VARCHAR(20),"
+        " time DATETIME,"
         " totalPrice INT,"
         " payway INT ,"
         " memberID VARCHAR(20) ,"
