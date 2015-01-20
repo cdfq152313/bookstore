@@ -67,7 +67,7 @@ class SQLFacade():
         data['orderID'] = orderID
         data['itemNumber'] = itemNumber
 
-        instruction = "DELETE FROM dispatch WEHRE orderID=%(orderID)s AND itemNumber=%(itemNumber)s ; "
+        instruction = "DELETE FROM dispatch WHERE orderID=%(orderID)s AND itemNumber=%(itemNumber)s ; "
         print (instruction)
         self.cursor.execute(instruction, data)
         self.cnx.commit()
