@@ -152,5 +152,8 @@ class SQLFacade():
         instruction = "SELECT * FROM book WHERE title LIKE %(keyword)s ;"
         print (instruction)
         self.cursor.execute(instruction, data)
+        result = []
         for i in self.cursor:
+            result.append(i)
             print (i)
+        return result

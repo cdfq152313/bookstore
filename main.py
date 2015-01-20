@@ -7,8 +7,16 @@ app = Flask(__name__)
 # set the secret key.
 app.secret_key = '\x11S>Bi\xf7\xd5}:\x90\r\xbb\xd7\x04\x91\x0e\xa6\x08o\xe6n8d\xf4'
 
-@app.route('/')
+@app.route('/', methods=['GET', 'POST'])
 def index():
+    if request.method == 'POST':
+        sql = SQLFacade()
+        keyword = request.form['keyword']
+        result = sql.find_book(keyword)
+        if 'username' in session:
+            return render_template('index.html',  name=session['username'], books=result)
+        return render_template('index.html',  books=result)
+
     if 'username' in session:
         return render_template('index.html', name=session['username'])
     return render_template('index.html')
@@ -44,9 +52,10 @@ def register():
         data = dict()
         data['memberID'] = request.form['username']
         data['passwd'] = request.form['password']
-        data['name'] = None
-        data['address'] = None
-        data['phone'] = None
+        data['name'] = request.form['name']
+        data['address'] = request.form['address']
+        data['phone'] = request.form['phone']
+        data['email'] = request.form['email']
         sql.create_member(data)
         return redirect(url_for('index'))
     return render_template('register.html')
@@ -63,4 +72,5 @@ def order():
 
 
 if __name__ == "__main__":
+    
     app.run(debug=True)
