@@ -48,13 +48,35 @@ class SQLFacade():
                 return True
         return False
 
-    def add_item2shoppingbox(self, data):
-        instruction = ("INSERT INTO dispatch (orderID, itemNumber, amountOfItem, salePrice)"
-                        "VALUES (%(orderID)s, %(itemNumber)s, %(amountOfItem)s, %(salePrice)s  ) ;" )
+    def add_item2shopping_cart(self, memberID, itemNumber, amountOfItem):
+        orderID = self.get_shopping_cart_ID(memberID)
+        data = dict()
+        data['orderID'] = orderID
+        data['itemNumber'] = itemNumber
+        data['amountOfItem'] = amountOfItem
+
+        instruction = ("INSERT INTO dispatch (orderID, itemNumber, amountOfItem )"
+                        "VALUES (%(orderID)s, %(itemNumber)s, %(amountOfItem)s ) ;" )
         print (instruction)
         self.cursor.execute(instruction, data)
+        self.cnx.commit()
+
+    def remove_item_from_shopping_cart(self, memberID, itemNumber):
+        orderID = self.get_shopping_cart_ID(memberID)
+        data = dict()
+        data['orderID'] = orderID
+        data['itemNumber'] = itemNumber
+
+        instruction = "DELETE FROM dispatch WEHRE orderID=%(orderID)s AND itemNumber=%(itemNumber)s ; "
+        print (instruction)
+        self.cursor.execute(instruction, data)
+        self.cnx.commit()
+
+
+    def update_item_from_shopping_cart(self, memberID, itemNumber, amountOfItem):
+        pass
         
-    def create_shoppingbox(self,memberID):
+    def create_shopping_cart(self,memberID):
         data = dict()
         data['memberID'] = memberID
         instruction =( "INSERT INTO  orderList (deliveryStatus, memberID)"
@@ -64,9 +86,9 @@ class SQLFacade():
         self.cnx.commit()
         # self.cursor.execute("SELECT LAST_INSERT_ID")
         # print(self.cursor)
-        return self.get_shoppingbox(memberID)
+        return self.get_shopping_cart_ID(memberID)
 
-    def get_shoppingbox(self, memberID):
+    def get_shopping_cart_ID(self, memberID):
         data = dict()
         data['memberID'] = memberID
         instruction = "SELECT orderID, deliveryStatus FROM orderList WHERE memberID=%(memberID)s"
@@ -77,7 +99,39 @@ class SQLFacade():
             if result[1] == 0:
                 print (result)
                 return result[0]
-        return self.create_shoppingbox(memberID) 
+        print ('cant find order ID, create one')
+        return self.create_shopping_cart(memberID) 
+
+    def get_itemName(self, itemNumber):
+        data = dict()
+        data['itemNumber'] = itemNumber
+        instruction = "SELECT title FROM book WHERE itemNumber=%(itemNumber)s ;"
+        print (instruction)
+        self.cursor.execute(instruction, data)
+        
+        for itemName in self.cursor:
+            return itemName[0] 
+
+    def get_shopping_cart(self, memberID):
+        orderID = self.get_shopping_cart_ID(memberID)
+        data = dict()
+        data['orderID'] = orderID
+        instruction = "SELECT itemNumber, amountOfItem FROM dispatch WHERE orderID=%(orderID)s ;"
+        print(instruction)
+        self.cursor.execute(instruction, data)
+
+        temp = []
+        for output in self.cursor:
+            temp.append( output )
+
+        result = []
+        for output in temp: 
+            itemname = self.get_itemName( output[0] )
+            result.append( (output[0], itemname, output[1]) )
+
+        for i in result:
+            print (i[0] , i[1], i[2])
+        return result
 
     def find_book(self, keyword):
         keyword = '%' + keyword + '%'
