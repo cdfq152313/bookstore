@@ -72,10 +72,27 @@ class SQLFacade():
         self.cursor.execute(instruction, data)
         self.cnx.commit()
 
-
     def update_item_from_shopping_cart(self, memberID, itemNumber, amountOfItem):
-        pass
-        
+        orderID = self.get_shopping_cart_ID(memberID)
+        data = dict()
+        data['orderID'] = orderID
+        data['itemNumber'] = itemNumber
+        data['amountOfItem'] = amountOfItem
+
+        instruction = "UPDATE dispatch SET amountOfItem=%(amountOfItem)s WHERE orderID=%(orderID)s AND itemNumber=%(itemNumber)s ; "
+        print (instruction)
+        self.cursor.execute(instruction, data)
+        self.cnx.commit()
+    
+    def commit_shopping_cart(self, memberID, payway):
+        orderID = self.get_shopping_cart_ID(memberID)
+        data = dict()
+        data['orderID'] = orderID
+        data['payway'] = payway
+
+
+
+       
     def create_shopping_cart(self,memberID):
         data = dict()
         data['memberID'] = memberID
