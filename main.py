@@ -92,6 +92,8 @@ def checkout():
     sql = SQLFacade()
     if request.method == 'POST':
         orderID = sql.buy_shopping_cart(session['username'], int(request.form['payway']))
+        if orderID is None:
+            return render_template('index.html', name=session['username'], error ="run out of stock!!")
         result = sql.get_orderList(orderID)
         return render_template('checkout.html', name=session['username'], books_in_orderlist =result)
     return render_template('checkout.html', name=session['username']) 

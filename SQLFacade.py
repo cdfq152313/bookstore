@@ -167,7 +167,7 @@ class SQLFacade():
         for acart in items:
             # run out of stock
             if acart[2] > acart[5]:
-                return False
+                return None
             # still has stock
             else:
                 totalPrice += (acart[2] * acart[4])
