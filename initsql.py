@@ -16,19 +16,7 @@ config = {
 }
 
 tablesContent  = []
-#prevOrder
-# tablesContent.append( (
-#        "CREATE TABLE prevOrder ("
-#         " number INT AUTO_INCREMENT,"
-#         " buyDate VARCHAR(20) ,"
-#         " orderNumber VARCHAR(20) NOT NULL,"
-#         " itemNumber VARCHAR(20) NOT NULL,"
-#         " itemName VARCHAR(50) NOT NULL,"
-#         " amount INT NOT NULL,"
-#         " price INT NOT NULL,"
-#         " PRIMARY KEY (number) "
-#         ") ENGINE=InnoDB ;" ) ) 
-#member
+
 tablesContent.append(  (
        "CREATE TABLE member ("
         " memberID VARCHAR(20) NOT NULL,"
@@ -118,18 +106,6 @@ def CreateTable(cursor, tablesContent):
                 print(err)
                 exit(1)
 
-
-# def InsertOrder(cnx, cursor, infileName):
-#     with open(infileName, 'r', encoding='utf-8' ) as infile:
-#         input = csv.reader(infile)
-#         instruction = ("INSERT INTO  prevOrder (buyDate, orderNumber, itemNumber, itemName, amount, price) "
-#             "VALUES (%s, %s, %s, %s, %s, %s) ;" )
-#         print (instruction)
-#         for data in input:
-#             data[4] = int(data[4])
-#             data[5] = int(data[5])
-#             cursor.execute(instruction, data)
-#         cnx.commit()
 
 def InsertOldData(infileName):
     from SQLFacade import SQLFacade

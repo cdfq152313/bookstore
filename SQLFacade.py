@@ -5,8 +5,8 @@ from datetime import datetime
 
 class SQLFacade():
     config = {
-      'user': 'root',
-      'password': 'imis1000801',
+      'user': 'bookmanager',
+      'password': '0000',
       'host': '127.0.0.1',
       'database': 'bookstore',
       'raise_on_warnings': True,
