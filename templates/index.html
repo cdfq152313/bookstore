@@ -11,135 +11,6 @@
         padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
       }
     </style>
-    <script type="text/javascript">
-
-function loadTab(obj,n){
-
-var layer;
-eval('layer=\'S'+n+'\'');
-
-//將 Tab 標籤樣式設成 Blur 型態
-var tabsF=document.getElementById('tabsF').getElementsByTagName('li');
-for (var i=0;i<tabsF.length;i++){
-    tabsF[i].setAttribute('id',null);
-     eval('document.getElementById(\'S'+(i+1)+'\').style.display=\'none\'')
-}
-
-//變更分頁標題樣式
-obj.parentNode.setAttribute('id','current');
-document.getElementById(layer).style.display='inline';
-
-}
-
-    </script>
-    <style type="text/css">
-#tabsC
-	{
-	/*ŠpªG€À­¶­n©ñžmŠb­¶­±¥ô·N³B,«h¥H€U€TŠæ€Å¬Ù²€*/
-	padding:0px;
-	margin:0px;
-	width:100%;
-	/*­Y€À­¶¬O¿W¥ß­¶­±,¥i¥HŠÛ­q tabsC ªº padding ­È¡AšÃ¥[clearÄÝ©Ê*/
-	/*clear:both*/
-	/*padding:12px;*/
-	border-left:#666 1px solid;
-	border-right:#666 1px solid;
-	border-bottom:#666 1px solid;
-	}
-
-#tabsF
-	{
-	float:left;
-	width:100%;
-	margin:0;
-	padding:0;
-	font-size:13px;
-	line-height:normal;
-	border-left:#FFF 1px solid;
-	border-right:#FFF 1px solid;
-	border-bottom:0px solid #666;
-	*float:none;
-      	}
-
-#tabsF ul
-	{
-	margin:0;
-	padding:10px 10px 0px 6px;
-	list-style:none;
-      	}
-
-#tabsF li
-	{
-	display:inline;
-	margin:0;
-	padding:0;
-	}
-
-#tabsF a
-	{
-	float:left;
-	margin:0;
-	padding:0px 0 0 4px;
-	text-decoration:none;
-	border-bottom:1px solid #666;
-	}
-
-#tabsF a span
-	{
-	float:left;
-	display:block;
-	padding:9px 15px 5px 6px;
-	color:#666;
-	}
-
-#tabsF span
-	{
-	float:left;
-	margin:0;
-	padding:4px 0 0 4px;
-	text-decoration:none;
-	}
-
-#tabsF span span
-	{
-	float:left;
-	display:block;
-	padding:9px 15px 5px 6px;
-	color:#666;
-	}
-	/* Commented Backslash Hack hides rule from IE5-Mac \*/
-
-	#tabsF a span {float:none;}
-	/* End IE5-Mac hack */
-	#tabsF a:hover span {
-      		color:#000;
-		}
-#tabsF a:hover
-	{
-	/*
-	background-position:0% -42px;
-	*/
-	}
-
-
-	#tabsF #current a
-		{
-
-      		border-bottom:1px solid #FFF;
-                color:#000;
-        	}
-	#tabsF #current a span
-		{
-
-                color:#000;
-        	}
-	#tabsF #current span span
-		{
-
-      		border-bottom:1px solid #FFF;
-                color:#000;
-		}
-    </style>
 </head>
 <body>
 
@@ -150,7 +21,6 @@ document.getElementById(layer).style.display='inline';
       <a class="brand" href="/">Book store</a>
       <ul class="nav  pull-right">
         {% if name %}
-          <li class="navbar-text">Logged in as <strong>{{ name }}</strong></li>
           <li><a href="/logout" class="navbar-link">登出</a></li>
         {% else %}
           <li><a href="/login" class="navbar-link">會員登入</a></li>
@@ -162,103 +32,47 @@ document.getElementById(layer).style.display='inline';
 </div>
 
 <div class="container">
+  <div class="row-fluid">
+    <div class="span10 well">
+      <table>
+      {% if books %}
+      <tr>
+        <th></th><th width="300">品名 </th><th width="100">售價</th><th> </th>
+      </tr>
+      {% for book in books %}
+      <tr>
+        <td><p> {{loop.index}}</p></td>
+        <td><p> {{book[2]}}</p></td>
+        <td><p> {{book[8]}}</p></td>
+        <td><form action="/cart" method="post">
+            <input type="hidden" name="itemNumber" value="{{book[0]}}">
+            <input type="hidden" name="amount" value="1">
+            <button class="btn btn-info" type="submit" name="btn-submit" value="add">加入購物車</button>
+            </form>
+        </td>
+      </tr>
+      {% endfor %}
+      </div>
+      {% endif %}
+      </table>
+    </div>
 
-<div class="row-fluid">
-
-  <div class="span10 well">
-    <h2>Heading</h2>
-
-    <table>
-  {% if books %}
- <tr>
- <th></th><th width="300">品名 </th><th width="100">售價 </th><th> </th>
- </tr>
- <div id="S1">
-  {% for book in books %}
-{% if loop.index is divisibleby 10 %}
- </div >
-{% endif %}
-{% if loop.index is divisibleby 10 %}
- <div id="S{{loop.index}}" style="display:none;">
-{% endif %}
- <tr>
- <td><p> {{loop.index}}</p></td>
-<td><p> {{book[2]}}</p></td>
-<td><p> {{book[9]}}</p></td>
-<td><button  class="btn btn-info"  type="submit " value="" >加入購物車</button></td>
-</tr>
-  {% endfor %}
-  </div>
+  <div class="span2 well">
+  {% if name %}
+  <p>Hi, <strong>{{ name }}</strong> !</p><br>
+  <a href="/cart" class="btn btn-primary">查詢購物車</a><p><br></p>
+  <a href="/orderhistory" class="btn btn-primary">查詢歷史訂單</a>
   {% endif %}
-  </table>
+  <br>
+  </div>
 
-
-<div id="tabsF">
-<ul>
-<li id="current"><a href="#" onclick="loadTab(this,1);"><span>Link 1</span></a></li>
-<li><a href="#" onclick="loadTab(this,2);"><span>Link 2</span></a></li>
-<li><a href="#" onclick="loadTab(this,3);"><span>Link 3</span></a></li>
-<li><a href="#" onclick="loadTab(this,4);"><span>Link 4</span></a></li>
-<li><a href="#" onclick="loadTab(this,5);"><span>Link 5</span></a></li>
-</ul>
-</div>
-
-<div id="tabsC">
-      <div id="S1" style="display:inline;">Link 1 內容...</div>
-      <div id="S2" style="display:none;">Link 2 內容...</div>
-      <div id="S3" style="display:none;">Link 3 內容...</div>
-      <div id="S4" style="display:none;">Link 4 內容...</div>
-      <div id="S5" style="display:none;">Link 5 內容...</div>
-</div>
-
-
-
-
-<div class="pagination">
-  <ul>
-    <li><a href="#">Prev</a></li>
-    <li><a href="#">1</a></li>
-    <li><a href="#">2</a></li>
-    <li><a href="#">3</a></li>
-    <li><a href="#">4</a></li>
-    <li><a href="#">5</a></li>
-    <li><a href="#">Next</a></li>
-  </ul>
-</div>
-
-    </div>
-
-
-
-  <div class="span2 well">
-{% if name %}
-<p>Hi, <strong>{{ name }}</strong> !</p><br>
-<a href="/" class="btn btn-primary">查詢訂單</a>
-{% endif %}
-
-<br>
-    </div>
-
-
-
-
-
-
-  <div class="span2 well">
+  <div class="span2 well pull-right">
   <form action="" method="post">
     <p>查詢書籍</p>
     <p><input class="span" type="text" name="keyword" placeholder="請輸入關鍵字"></p>
     <button  class="btn"  type="submit " value="search" >查詢</button>
   </form>
-    </div>
-
-
-
-
+  </div>
 </div>
-
-
-
 </body>
-
 </html>

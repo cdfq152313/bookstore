@@ -153,6 +153,7 @@ def InsertOldData(infileName):
                 member['name'] = None
                 member['address'] = None
                 member['phone'] = None
+                member['email'] = None
                 x.create_member(member)
 
             # insert data

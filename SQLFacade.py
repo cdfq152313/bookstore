@@ -161,6 +161,7 @@ class SQLFacade():
         self.cnx.commit()
 
     def buy_shopping_cart(self, memberID, payway):
+        orderID = self.get_shopping_cart_ID(memberID)
         items = self.get_shopping_cart(memberID)
         totalPrice = 0
         for acart in items:
@@ -175,6 +176,7 @@ class SQLFacade():
             self.__take_book_from_stock(acart[0], acart[5] - acart[2])
 
         self.__commit_shopping_cart(memberID, payway, totalPrice)
+        return orderID
 
     def create_shopping_cart(self,memberID):
         data = dict()

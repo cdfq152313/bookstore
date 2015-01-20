@@ -16,10 +16,10 @@ def index():
         if 'username' in session:
             return render_template('index.html',  name=session['username'], books=result)
         return render_template('index.html',  books=result)
-
-    if 'username' in session:
-        return render_template('index.html', name=session['username'])
-    return render_template('index.html')
+    if request.method == 'GET':
+        if 'username' in session:
+            return render_template('index.html',  name=session['username'])
+        return render_template('index.html')
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -70,7 +70,44 @@ def order():
     else:
         return render_template('order.html')
 
+@app.route('/cart', methods=['GET', 'POST'])
+def cart():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    sql = SQLFacade()
+    if request.method == 'POST':
+        if request.form['btn-submit'] == "add":
+            result = sql.add_or_update_item2shopping_cart(session['username'], request.form['itemNumber'], request.form['amount'])
+        elif request.form['btn-submit'] == "delete":
+            result = sql.remove_item_from_shopping_cart(session['username'], request.form['itemNumber'])
 
+
+    result = sql.get_shopping_cart( session['username'] )
+    return render_template('cart.html', name=session['username'], books_in_cart =result)
+
+@app.route('/checkout', methods=['GET', 'POST'])
+def checkout():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+    sql = SQLFacade()
+    if request.method == 'POST':
+        orderID = sql.buy_shopping_cart(session['username'], int(request.form['payway']))
+        result = sql.get_orderList(orderID)
+        return render_template('checkout.html', name=session['username'], books_in_orderlist =result)
+    return render_template('checkout.html', name=session['username']) 
+
+@app.route('/orderhistory', methods=['GET', 'POST'])
+def orderhistory():
+    if 'username' not in session:
+        return redirect(url_for('login'))
+
+    sql = SQLFacade()
+    if request.method == 'POST':
+        result = sql.get_orderList( request.form['detail'] )
+        return render_template('checkout.html', name=session['username'], books_in_orderlist =result)
+    if request.method == 'GET':
+        result = sql.get_all_orderList(session['username'])
+        return render_template('orderhistory.html', name=session['username'], orderlist=result) 
 if __name__ == "__main__":
-    
+
     app.run(debug=True)

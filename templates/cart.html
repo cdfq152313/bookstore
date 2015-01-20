@@ -1,0 +1,81 @@
+<!doctype html>
+<html>
+<head>
+<title>Online Bookstore</title>
+<link href="../static/bootstrap.css" rel="stylesheet" media="screen">
+<link href="../static/bootstrap-responsive.css" rel="stylesheet" media="screen">
+<script src="http://code.jquery.com/jquery.js"></script>
+<script src="../static/bootstrap.min.js"></script>
+<style>
+      body {
+        padding-top: 60px; /* 60px to make the container go all the way to the bottom of the topbar */
+      }
+
+    </style>
+</head>
+<body>
+<!--navbar -->
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <div class="navbar-inner">
+    <div class="container">
+      <a class="brand" href="/">Book store</a>
+      <ul class="nav  pull-right">
+        {% if name %}
+          <li><a href="/logout" class="navbar-link">登出</a></li>
+        {% else %}
+          <li><a href="/login" class="navbar-link">會員登入</a></li>
+          <li><a href="/register" class="navbar-link">註冊</a></li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</div>
+
+<div class="container">
+  <div class="row-fluid">
+    <div class="span10 well">
+      <h2>購物車</h2>
+      <hr>
+      <table>
+        <tr>
+          <th></th><th align="center" width="300">品名 </th><th align="center" width="50">數量</th><th align="center" width="50">售價 </th> <th width="100"></th>
+         </tr>
+         {% if books_in_cart %}
+         {% for book in books_in_cart %}
+         <tr>
+           <td align="center"><p> {{loop.index}}</p></td>
+           <td align="center"><p> {{book[1]}}</p></td>
+           <td align="center"><p> {{book[2]}}</p></td>
+           <td align="center"><p> {{book[4]}}</p></td>
+           <td align="center">
+             <form action="/cart" method="post">
+             <input type="hidden" name="itemNumber" value="{{book[0]}}">
+             <button  class="btn btn-danger"  type="submit" name="btn-submit" value="delete" >刪除</button>
+             </form>
+          </td>
+          </tr>
+          {% endfor %}
+          {% endif %}
+        </table>
+        <hr>
+        <form action="/checkout" method="post">
+          <select name="payway">
+        　  <option value="1">ATM轉帳</option>
+        　  <option value="2">超商取貨付款</option>
+          </select>
+        <button class="btn btn-success pull-right" type="submit" name="btn-submit" value="checkout">結帳</button>
+        </form>
+      </div>
+
+      <div class="span2 well">
+        {% if name %}
+        <p>Hi, <strong>{{ name }}</strong> !</p><br>
+        <a href="/cart" class="btn btn-primary">查詢購物車</a><p><br></p>
+        <a href="/orderhistory" class="btn btn-primary">查詢歷史訂單</a>
+        {% endif %}
+        <br>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
