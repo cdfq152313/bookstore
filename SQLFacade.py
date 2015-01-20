@@ -180,7 +180,7 @@ class SQLFacade():
                 print (result)
                 return result[0]
         print ('cant find order ID, create one')
-        return self.create_shopping_cart(memberID) 
+        return self.create_shopping_cart(memberID)
 
     def get_itemName(self, itemNumber):
         data = dict()
@@ -194,6 +194,34 @@ class SQLFacade():
 
     def get_shopping_cart(self, memberID):
         orderID = self.get_shopping_cart_ID(memberID)
+        data = dict()
+        data['orderID'] = orderID
+        instruction =( "SELECT dispatch.itemNumber, book.title, dispatch.amountOfItem, book.listPrice, book.salePrice, book.amountOfStock "
+                       "FROM dispatch, book "
+                       "WHERE orderID=%(orderID)s AND dispatch.itemNumber=book.itemNumber ;")
+        print(instruction)
+        self.cursor.execute(instruction, data)
+
+        result = []
+        for i in self.cursor:
+            result.append(i)
+        return result
+
+    def get_all_orderList(self, memberID):
+        data = dict()
+        data['memberID'] = memberID
+        data['shopping_cart_status'] = 0
+        instruction =( "SELECT * FROM orderList WHERE memberID=%(memberID)s AND deliveryStatus!=%(shopping_cart_status)s;")
+        print(instruction)
+        self.cursor.execute(instruction, data)
+
+        result = []
+        for i in self.cursor:
+            print(i)
+            result.append(i)
+        return result
+
+    def get_orderList(self, orderID):
         data = dict()
         data['orderID'] = orderID
         instruction =( "SELECT dispatch.itemNumber, book.title, dispatch.amountOfItem, book.listPrice, book.salePrice, book.amountOfStock "
