@@ -48,8 +48,20 @@ class SQLFacade():
                 return True
         return False
 
-    def add_item2shopping_cart(self, memberID, itemNumber, amountOfItem):
-        orderID = self.get_shopping_cart_ID(memberID)
+    def __item_exist_in_cart(self, orderID, itemNumber):
+        data = dict()
+        data['orderID'] = orderID
+        data['itemNumber'] = itemNumber
+        instruction = "SELECT COUNT(*) FROM dispatch WHERE orderID=%(orderID)s AND itemNumber=%(itemNumber)s;"
+        self.cursor.execute(instruction, data)
+        for count in self.cursor:
+            print(count[0])
+            if count[0] == 0:
+                return False
+            else:
+                return True
+
+    def add_item2shopping_cart(self, orderID, itemNumber, amountOfItem):
         data = dict()
         data['orderID'] = orderID
         data['itemNumber'] = itemNumber
@@ -60,6 +72,25 @@ class SQLFacade():
         print (instruction)
         self.cursor.execute(instruction, data)
         self.cnx.commit()
+
+    def update_item_from_shopping_cart(self, orderID, itemNumber, amountOfItem):
+        data = dict()
+        data['orderID'] = orderID
+        data['itemNumber'] = itemNumber
+        data['amountOfItem'] = amountOfItem
+
+        instruction = "UPDATE dispatch SET amountOfItem=%(amountOfItem)s WHERE orderID=%(orderID)s AND itemNumber=%(itemNumber)s ; "
+        print (instruction)
+        self.cursor.execute(instruction, data)
+        self.cnx.commit()
+
+    def add_or_update_item2shopping_cart(self, memberID, itemNumber, amountOfItem):
+        orderID = self.get_shopping_cart_ID(memberID)
+        exist = self.__item_exist_in_cart(orderID, itemNumber)
+        if exist:
+            self.update_item_from_shopping_cart(orderID, itemNumber, amountOfItem)
+        else:
+            self.add_item2shopping_cart(orderID, itemNumber, amountOfItem)
 
     def remove_item_from_shopping_cart(self, memberID, itemNumber):
         orderID = self.get_shopping_cart_ID(memberID)
@@ -72,17 +103,7 @@ class SQLFacade():
         self.cursor.execute(instruction, data)
         self.cnx.commit()
 
-    def update_item_from_shopping_cart(self, memberID, itemNumber, amountOfItem):
-        orderID = self.get_shopping_cart_ID(memberID)
-        data = dict()
-        data['orderID'] = orderID
-        data['itemNumber'] = itemNumber
-        data['amountOfItem'] = amountOfItem
-
-        instruction = "UPDATE dispatch SET amountOfItem=%(amountOfItem)s WHERE orderID=%(orderID)s AND itemNumber=%(itemNumber)s ; "
-        print (instruction)
-        self.cursor.execute(instruction, data)
-        self.cnx.commit()
+    
 
     def test_time(self):
         from datetime import datetime
@@ -141,7 +162,6 @@ class SQLFacade():
 
     def buy_shopping_cart(self, memberID, payway):
         items = self.get_shopping_cart(memberID)
-        print('hello world')
         totalPrice = 0
         for acart in items:
             # run out of stock

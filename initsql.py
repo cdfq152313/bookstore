@@ -17,17 +17,17 @@ config = {
 
 tablesContent  = []
 #prevOrder
-tablesContent.append( (
-       "CREATE TABLE prevOrder ("
-        " number INT AUTO_INCREMENT,"
-        " buyDate VARCHAR(20) ,"
-        " orderNumber VARCHAR(20) NOT NULL,"
-        " itemNumber VARCHAR(20) NOT NULL,"
-        " itemName VARCHAR(50) NOT NULL,"
-        " amount INT NOT NULL,"
-        " price INT NOT NULL,"
-        " PRIMARY KEY (number) "
-        ") ENGINE=InnoDB ;" ) ) 
+# tablesContent.append( (
+#        "CREATE TABLE prevOrder ("
+#         " number INT AUTO_INCREMENT,"
+#         " buyDate VARCHAR(20) ,"
+#         " orderNumber VARCHAR(20) NOT NULL,"
+#         " itemNumber VARCHAR(20) NOT NULL,"
+#         " itemName VARCHAR(50) NOT NULL,"
+#         " amount INT NOT NULL,"
+#         " price INT NOT NULL,"
+#         " PRIMARY KEY (number) "
+#         ") ENGINE=InnoDB ;" ) ) 
 #member
 tablesContent.append(  (
        "CREATE TABLE member ("
@@ -119,23 +119,51 @@ def CreateTable(cursor, tablesContent):
                 exit(1)
 
 
-def InsertOrder(cnx, cursor, infileName):
+# def InsertOrder(cnx, cursor, infileName):
+#     with open(infileName, 'r', encoding='utf-8' ) as infile:
+#         input = csv.reader(infile)
+#         instruction = ("INSERT INTO  prevOrder (buyDate, orderNumber, itemNumber, itemName, amount, price) "
+#             "VALUES (%s, %s, %s, %s, %s, %s) ;" )
+#         print (instruction)
+#         for data in input:
+#             data[4] = int(data[4])
+#             data[5] = int(data[5])
+#             cursor.execute(instruction, data)
+#         cnx.commit()
+
+def InsertOldData(infileName):
+    from SQLFacade import SQLFacade
+    x = SQLFacade()
+
     with open(infileName, 'r', encoding='utf-8' ) as infile:
         input = csv.reader(infile)
-        instruction = ("INSERT INTO  prevOrder (buyDate, orderNumber, itemNumber, itemName, amount, price) "
-            "VALUES (%s, %s, %s, %s, %s, %s) ;" )
-        print (instruction)
+
+        member = dict()
+        member['memberID'] = ''
+
+        first = True
         for data in input:
-            data[4] = int(data[4])
-            data[5] = int(data[5])
-            cursor.execute(instruction, data)
-        cnx.commit()
+            # create member
+            if member['memberID'] != data[1]:
+                if not first:
+                    x.buy_shopping_cart(member['memberID'],1)
+                first = False
+                member['memberID'] = data[1]
+                member['passwd'] =  data[1]
+                member['name'] = None
+                member['address'] = None
+                member['phone'] = None
+                x.create_member(member)
+
+            # insert data
+            x.add_or_update_item2shopping_cart(member['memberID'], data[2], int(data[4]))
+
 
 def InsertBook(cnx, cursor, infileName):
     with open(infileName, 'r', encoding='utf-8' ) as infile:
         input = csv.reader(infile)
         instruction = ("INSERT INTO  book (itemNumber, ISBN, title, author, publisher, publishDate, introduction, listPrice, salePrice, amountOfStock)"
-            "VALUES (%s, NULL, %s, NULL, NULL, NULL, NULL, %s, %s,10) ;" )
+            "VALUES (%s, NULL, %s, NULL, NULL, NULL, NULL, %s, %s,1000) ;" )
         print (instruction)
         for data in input:
             data[2] = int(data[2])
@@ -143,11 +171,17 @@ def InsertBook(cnx, cursor, infileName):
             cursor.execute(instruction, data)
         cnx.commit()
 
+def ResetBookAmount(cnx, cursor):
+    instruction = ("UPDATE book SET amountOfStock=10" )
+    cursor.execute(instruction)
+    cnx.commit()
+
 if __name__ == '__main__':
     cnx = ConnectSQL(config)
     cursor = cnx.cursor()
     CreateTable(cursor, tablesContent)
-    InsertOrder(cnx, cursor, orderData)
     InsertBook(cnx, cursor, bookData)
+    InsertOldData(orderData)
+    ResetBookAmount(cnx, cursor)
     cursor.close()
     cnx.close()
