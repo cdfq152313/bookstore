@@ -32,8 +32,8 @@ class SQLFacade():
             return cnx
 
     def create_member(self, data):
-        instruction =( "INSERT INTO  member (memberID, passwd, name, address, phone)"
-            "VALUES (%(memberID)s, %(passwd)s, %(name)s, %(address)s, %(phone)s) ;")
+        instruction =( "INSERT INTO  member (memberID, passwd, name, address, phone,email)"
+            "VALUES (%(memberID)s, %(passwd)s, %(name)s, %(address)s, %(phone)s, %(email)s) ;")
         print (instruction)
         self.cursor.execute(instruction, data)
         self.cnx.commit()
